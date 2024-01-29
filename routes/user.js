@@ -28,8 +28,9 @@ router.post('/register', async (req, res, next) => {
     try {
         
         let user_exist = await User.findOne({ email: email });
+
         if(user_exist) {
-            res.json({
+            return res.status(400).json({
                 success: false,
                 msg: 'User already exists'
             });
@@ -67,13 +68,14 @@ router.post('/register', async (req, res, next) => {
                     token: token
                 });
             });
-        
-    
-            
-            const isMatch = await bcryptjs.compare(password, user.password);
- 
+                  
+             
     }catch(err){
         console.log(err);
+        res.status(402).json({
+            success: false,
+            message: 'Something error occured'
+        })
     }
 });
 

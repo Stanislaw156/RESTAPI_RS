@@ -20,6 +20,7 @@ dotenv.config({
 connectDB();
 
 app.use('/api/RS/auth', require('./routes/user'));
+app.use('/api/RS', require('./routes/RS'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,
