@@ -2,8 +2,6 @@ const express = require('express');
 const auth = require('../middleware/user_jwt');
 
 const RS = require('../models/RS');
-const RS = require('../models/RS');
-const RS = require('../models/RS');
 
 const router = express.Router();
 
@@ -63,7 +61,7 @@ router.put('/:id', async(req, res, next)=>{
             runValidators: true
         });
 
-        res.status(200).json({success: true, msg: 'Successfully updated'});
+        res.status(200).json({success: true, RS: RS, msg: 'Successfully updated'});
 
     }catch(error){
         next(error);
@@ -74,7 +72,7 @@ router.put('/:id', async(req, res, next)=>{
 //desc Delete a task RS
 //method DELETE
 
-router.delete('/:id', async(req, res. next)=>{
+router.delete('/:id', async(req, res, next)=>{
     try{
         let RS = await RS.findById(req.params.id);
         if(!RS){
