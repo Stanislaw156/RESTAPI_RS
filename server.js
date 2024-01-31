@@ -22,7 +22,7 @@ connectDB();
 app.use('/api/RS/auth', require('./routes/user'));
 app.use('/api/RS', require('./routes/RS'));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT,
     console.log(`Server running on port: ${PORT}`.red.underline.bold)
     
