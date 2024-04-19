@@ -1,0 +1,810 @@
+openapi: 3.0.0
+info:
+  title: Ride Sharing API
+  description: API for managing ride-sharing services
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4000/api/RS
+    description: Local server
+
+paths:
+  /auth:
+    get:
+      summary: Get information about the current user
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Information about the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegistrationResponse'
+        '400':
+          description: Bad request, user already exists or validation fails
+        '500':
+          description: Server error
+
+  /auth/login:
+    post:
+      summary: Login a user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+        '400':
+          description: Invalid credentials
+        '500':
+          description: Server error
+    
+  /userrole/assignRole:
+    post:
+      summary: Assign a role to a user
+      tags:
+        - UserRole
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRole'
+      responses:
+        '200':
+          description: Role assigned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignRoleResponse'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+
+  /userrole/getRole:
+    get:
+      summary: Get a user's role
+      tags:
+        - UserRole
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User's role retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRoleResponse'
+        '404':
+          description: User role not found or User has no assigned role
+        '500':
+          description: Server error  
+
+  /driver/createDriver:
+    post:
+      summary: Add a new driver
+      tags:
+        - Driver
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverRequest'
+      responses:
+        '201':
+          description: New driver added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '403':
+          description: User is not authorized as a driver
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+
+  /driver/getInfoDriver:
+    get:
+      summary: Retrieve information about all drivers
+      tags:
+        - Driver
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of drivers retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Driver'
+        '500':
+          description: Server error
+
+  /driver/myDriverInfo:
+    get:
+      summary: Get the driver profile associated with the current user
+      tags:
+        - Driver
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Driver profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '404':
+          description: Driver profile not found for this user
+        '500':
+          description: Server error
+
+  /driver/updateMyDriverInfo:
+    put:
+      summary: Update the driver information for the current user
+      tags:
+        - Driver
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverRequest'
+      responses:
+        '200':
+          description: Driver information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '404':
+          description: Driver profile not found for this user
+        '500':
+          description: Server error 
+
+  /passenger/createPassenger:
+    post:
+      summary: Add a new passenger
+      tags:
+        - Passenger
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassengerRequest'
+      responses:
+        '201':
+          description: New passenger added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Passenger'
+        '403':
+          description: User is not authorized as a passenger
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+
+  /passenger/getInfoPassenger:
+    get:
+      summary: Retrieve information about all passengers
+      tags:
+        - Passenger
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of passengers retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Passenger'
+        '500':
+          description: Server error
+
+  /passenger/myPassengerInfo:
+    get:
+      summary: Get the passenger profile associated with the current user
+      tags:
+        - Passenger
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Passenger profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Passenger'
+        '404':
+          description: Passenger profile not found for this user
+        '500':
+          description: Server error
+
+  /passenger/updateMyPassengerInfo:
+    put:
+      summary: Update the passenger information for the current user
+      tags:
+        - Passenger
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassengerRequest'
+      responses:
+        '200':
+          description: Passenger information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Passenger'
+        '404':
+          description: Passenger profile not found for this user
+        '500':
+          description: Server error             
+
+  /shareride/createRide:
+    post:
+      summary: Create a new shared ride
+      tags:
+        - ShareRide
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRideRequest'
+      responses:
+        '201':
+          description: New ride created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareRide'
+
+  /shareride/getAllRides:
+    get:
+      summary: Get all shared rides
+      tags:
+        - ShareRide
+      responses:
+        '200':
+          description: List of all shared rides
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShareRide'
+
+  /shareride/searchRides:
+    get:
+      summary: Search for rides by startPoint, endPoint, and date
+      tags:
+        - ShareRide
+      parameters:
+        - in: query
+          name: startPoint
+          schema:
+            type: string
+        - in: query
+          name: endPoint
+          schema:
+            type: string
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShareRide'             
+
+  /shareride/joinRide/{id}:
+    post:
+      summary: Join an existing ride
+      tags:
+        - ShareRide
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully joined the ride
+        '400':
+          description: Already joined or no seats available
+        '404':
+          description: Ride not found
+        '500':
+          description: Server error
+
+  /shareride/myCreatedRides:
+    get:
+      summary: Get rides created by the authenticated user
+      tags:
+        - ShareRide
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of rides created by the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShareRide'
+
+  /shareride/myJoinedRides:
+    get:
+      summary: Get rides the authenticated user has joined
+      tags:
+        - ShareRide
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of rides the user has joined
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShareRide'
+
+  /shareride/leaveRide/{id}:
+    post:
+      summary: Leave a shared ride
+      tags:
+        - ShareRide
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the ride to leave
+      responses:
+        '200':
+          description: Successfully left the ride
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully left the ride.
+        '400':
+          description: Not a participant of the ride or ride is full
+        '404':
+          description: Ride not found
+        '500':
+          description: Server error
+
+  shareride/deleteRide/{id}:
+    delete:
+      summary: Delete a shared ride
+      tags:
+        - ShareRide
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the ride to delete
+      responses:
+        '200':
+          description: Successfully deleted the ride
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Ride was successfully deleted.
+        '403':
+          description: Unauthorized to delete this ride
+        '404':
+          description: Ride not found
+        '500':
+          description: Server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+  User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the user.
+        userName:
+          type: string
+          description: The user's chosen username.
+        email:
+          type: string
+          format: email
+          description: The user's email address.
+        phoneNumber:
+          type: string
+          description: The user's phone number.
+        isDriver:
+          type: boolean
+          description: Flag indicating whether the user is a driver.
+        isPassenger:
+          type: boolean
+          description: Flag indicating whether the user is a passenger.
+        driverId:
+          type: string
+          format: uuid
+          description: The unique identifier for the driver, if applicable.
+        passengerId:
+          type: string
+          format: uuid
+          description: The unique identifier for the passenger, if applicable.
+
+  UserRegistrationRequest:
+      type: object
+      required:
+        - userName
+        - email
+        - password
+        - phoneNumber
+      properties:
+        userName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        phoneNumber:
+          type: string
+
+  UserRegistrationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        msg:
+          type: string
+          example: "User registered successfully"
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        userId:
+          type: string
+          format: uuid
+          example: "507f191e810c19729de860ea"
+
+  UserLoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        userId:
+          type: string
+          format: uuid
+          example: "507f191e810c19729de860ea"
+
+  AssignRole:
+      type: object
+      required:
+        - isDriver
+        - isPassenger
+      properties:
+        isDriver:
+          type: boolean
+          description: Indicates if the user is assigned the driver role.
+        isPassenger:
+          type: boolean
+          description: Indicates if the user is assigned the passenger role.
+
+  AssignRoleResponse:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: Role assigned successfully
+        role:
+          type: object
+          properties:
+            isDriver:
+              type: boolean
+            isPassenger:
+              type: boolean
+            driverId:
+              type: string
+              nullable: true
+              description: The unique identifier for the driver, if applicable.
+            passengerId:
+              type: string
+              nullable: true
+              description: The unique identifier for the passenger, if applicable.
+
+  GetRoleResponse:
+      type: object
+      properties:
+        role:
+          type: string
+          example: "Driver" 
+        driverId:
+          type: string
+          nullable: true
+          description: The unique identifier for the driver, if applicable.
+          example: "5f76018c8f1d6435b8d9c2e2"
+        passengerId:
+          type: string
+          nullable: true
+          description: The unique identifier for the passenger, if applicable.
+          example: "5f76018c8f1d6435b8d9c2e3"
+
+  DriverRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - birthDate
+        - vehicle
+        - registrationNumber
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        vehicle:
+          type: string
+        registrationNumber:
+          type: string
+        note:
+          type: string
+
+  Driver:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        vehicle:
+          type: string
+        registrationNumber:
+          type: string
+        note:
+          type: string
+        _id:
+          type: string
+          format: uuid
+          description: Unique identifier for the Driver   
+
+  PassengerRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - birthDate
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        note:
+          type: string
+
+  Passenger:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        note:
+          type: string
+        _id:
+          type: string
+          format: uuid
+          description: Unique identifier for the Passenger         
+
+  CreateRideRequest:
+      type: object
+      required:
+        - startPoint
+        - endPoint
+        - date
+        - time
+        - seats
+        - price
+      properties:
+        startPoint:
+          type: string
+        endPoint:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        seats:
+          type: integer
+        price:
+          type: number
+          format: float
+
+  Ride:
+      type: object
+      required:
+        - user
+        - startPoint
+        - endPoint
+        - date
+        - time
+        - seats
+        - price
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier of the ride.
+        user:
+          $ref: '#/components/schemas/User'
+          description: The user who created the ride.
+        joinedUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          description: Users who have joined the ride.
+        startPoint:
+          type: string
+          description: The starting point of the ride.
+        endPoint:
+          type: string
+          description: The destination of the ride.
+        date:
+          type: string
+          format: date
+          description: The date of the ride.
+        time:
+          type: string
+          description: The time when the ride starts.
+        seats:
+          type: integer
+          description: The number of seats available for the ride.
+        price:
+          type: number
+          format: float
+          description: The price per seat for the ride.
+
+  User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier of the user.
+        userName:
+          type: string
+          description: The username of the user.     
+
+  JoinRideResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message indicating the outcome of the join operation.
+        ride:
+          $ref: '#/components/schemas/Ride'
+          description: Details of the ride joined by the user.
+
+  RideParticipationDetail:
+      type: object
+      properties:
+        rideDetails:
+          $ref: '#/components/schemas/Ride'
+          description: Detailed information about the ride.
+        createdBy:
+          $ref: '#/components/schemas/User'
+          description: Information about the user who created the ride.   
+
+security:
+  - bearerAuth: []
